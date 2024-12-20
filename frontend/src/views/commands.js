@@ -46,7 +46,9 @@ const logCss = {
 
 const MyForm = () => {
     const [logs, setLogs] = useState([]);
+    const [trigger, setTrigger] = useState(false);
     useEffect(() => {
+      if (!trigger) return;
         // Connect to the Django Channels WebSocket
         const logSocket = new WebSocket('ws://127.0.0.1:8000/ws/logs/');
     
@@ -65,7 +67,7 @@ const MyForm = () => {
         return () => {
           logSocket.close();
         };
-      }, []);
+      }, [trigger]);
   // State for each input field
   const [formData, setFormData] = useState({
     field1: "",
@@ -91,6 +93,7 @@ const MyForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLogs([""]);
+    setTrigger(true);
     console.log("Form Submitted", formData);
     if(formData.radioGroup == "sync")
     {
@@ -117,9 +120,9 @@ const MyForm = () => {
         console.log(data);
   
         if (response.status === 200) {
-            const logSocket = new WebSocket('ws://127.0.0.1:8000/ws/logs/');
+            //const logSocket = new WebSocket('ws://127.0.0.1:8000/ws/logs/');
     
-            logSocket.onmessage = (event) => {
+            /*logSocket.onmessage = (event) => {
               const data = JSON.parse(event.data);
               const logMessage = data.message;
               console.log(logMessage)
@@ -133,7 +136,7 @@ const MyForm = () => {
         
             return () => {
               logSocket.close();
-            };
+            };*/
         } else {
           alert(data.message || "Error");
         }
